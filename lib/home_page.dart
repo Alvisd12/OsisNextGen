@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:osis/vote_page.dart';
+import 'package:osis/statistik_page.dart';
+import 'package:osis/profil_page.dart';
 
 class HomePage extends StatefulWidget {
   final int nis;
@@ -13,18 +15,49 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  bool _isInVotePage = false;
 
   final List<Widget> _pages = [
     const BerandaPage(),
     const CandidatesPage(),
-    const VotePage(),
-    Center(child: Text("Statistik")),
-    Center(child: Text("Profil")),
+    const StatistikPage(),
+    const ProfilPage()
   ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
+      _isInVotePage = false;
+    });
+  }
+
+  void _goToVotePage() {
+    setState(() {
+      _isInVotePage = true;
+    });
+
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => const VotePage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          const begin = Offset(0.0, 1.0);
+          const end = Offset.zero;
+          const curve = Curves.easeInOut;
+
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var offsetAnimation = animation.drive(tween);
+
+          return SlideTransition(
+            position: offsetAnimation,
+            child: child,
+          );
+        },
+      ),
+    ).then((_) {
+      setState(() {
+        _isInVotePage = false;
+      });
     });
   }
 
@@ -88,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   children: [
                     Text("Made By: AlvisDeWinRet", style: TextStyle(color: Colors.white70, fontSize: 12)),
-                    Text("Designed By: Figma", style: TextStyle(color: Colors.white70, fontSize: 12)),
+                    Text("Designed With: Figma", style: TextStyle(color: Colors.white70, fontSize: 12)),
                   ],
                 ),
               ),
@@ -96,43 +129,65 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu, color: Colors.green),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Row(
-              children: const [
-                Text(
-                  "Hello, User",
-                  style: TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w500),
+      appBar: _isInVotePage
+          ? null
+          : AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: Builder(
+                builder: (context) => IconButton(
+                  icon: const Icon(Icons.menu, color: Colors.green),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
-                SizedBox(width: 12),
-                CircleAvatar(
-                  backgroundImage: AssetImage("assets/icon/user.png"),
-                  radius: 18,
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: Row(
+                    children: const [
+                      Text(
+                        "Hello, User",
+                        style: TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(width: 12),
+                      CircleAvatar(
+                        backgroundImage: AssetImage("assets/icon/user.png"),
+                        radius: 18,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
+      body: Stack(
+        children: [
+          IndexedStack(
+            index: _selectedIndex,
+            children: [
+              _pages[0],
+              _pages[1],
+              Center(
+                child: ElevatedButton(
+                  onPressed: _goToVotePage,
+                  child: const Text("Go to Vote Page"),
+                ),
+              ),
+              _pages[2],
+              _pages[3],
+            ],
           ),
         ],
       ),
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        items: navItems,
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        selectedItemColor: Colors.green[700],
-        unselectedItemColor: Colors.grey,
-        type: BottomNavigationBarType.fixed,
-      ),
+      bottomNavigationBar: _isInVotePage
+          ? null
+          : BottomNavigationBar(
+              items: navItems,
+              currentIndex: _selectedIndex,
+              onTap: _onItemTapped,
+              selectedItemColor: Colors.green[700],
+              unselectedItemColor: Colors.grey,
+              type: BottomNavigationBarType.fixed,
+            ),
     );
   }
 
@@ -150,13 +205,13 @@ class _HomePageState extends State<HomePage> {
             index = 1;
             break;
           case 'Vote':
+            _goToVotePage();
+            return;
+          case 'Statistik':
             index = 2;
             break;
-          case 'Statistik':
-            index = 3;
-            break;
           case 'Profil':
-            index = 4;
+            index = 3;
             break;
         }
         Navigator.pop(context);
@@ -165,6 +220,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
+
 
 // =================== Beranda =====================
 
@@ -222,24 +278,48 @@ class _BerandaPageState extends State<BerandaPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 12),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.green[800],
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Row(
-                children: const [
-                  Expanded(
-                    child: Text(
-                      "Select Your Choice Now!",
-                      style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    pageBuilder: (context, animation, secondaryAnimation) => const VotePage(),
+                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                      const begin = Offset(0.0, 1.0);
+                      const end = Offset.zero;
+                      const curve = Curves.easeInOut;
+
+                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+                      var offsetAnimation = animation.drive(tween);
+
+                      return SlideTransition(
+                        position: offsetAnimation,
+                        child: child,
+                      );
+                    },
                   ),
-                  Icon(Icons.arrow_forward, color: Colors.white),
-                ],
+                );
+              },
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.green[800],
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: const [
+                    Expanded(
+                      child: Text(
+                        "Select Your Choice Now!",
+                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    Icon(Icons.arrow_forward, color: Colors.white),
+                  ],
+                ),
               ),
             ),
+
             const SizedBox(height: 24),
             const Text(
               "The Candidates",

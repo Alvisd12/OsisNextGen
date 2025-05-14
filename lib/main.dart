@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'app/routes/app_pages.dart';
+import 'welcome_page.dart';
 
 void main() {
-  runApp(
-    GetMaterialApp(
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: AppPages.INITIAL,
-      getPages: AppPages.routes,
-    ),
-  );
+      title: 'Pemilihan Ketua OSIS',
+      home: WelcomePage(),
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+    );
+  }
 }

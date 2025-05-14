@@ -37,7 +37,7 @@ class _CandidateVotePageState extends State<CandidateVotePage> {
     return Scaffold(
       backgroundColor: const Color(0xFF00A651),
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),

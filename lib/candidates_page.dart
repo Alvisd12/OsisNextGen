@@ -4,19 +4,19 @@ class CandidatesPage extends StatelessWidget {
   final List<Map<String, String>> candidates = [
     {
       'name': 'Moch. Lukman',
-      'image': 'assets/images/lukman.jpg',
+      'image': 'assets/images/lukman.png',
       'visi': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       'misi': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam quis gravida purus. Curabitur condimentum molestie posuere. Nullam porttitor maximus orci et lobortis. Morbi eget est ac arcu ullamcorper blandit.',
     },
     {
       'name': 'Aurelia Naura',
-      'image': 'assets/images/aurelia.jpg',
+      'image': 'assets/images/aurelia.png',
       'visi': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       'misi': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam quis gravida purus. Curabitur condimentum molestie posuere. Nullam porttitor maximus orci et lobortis. Morbi eget est ac arcu ullamcorper blandit.',
     },
     {
       'name': 'Andra Gio F.',
-      'image': 'assets/images/andra.jpg',
+      'image': 'assets/images/andra.png',
       'visi': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
       'misi': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam quis gravida purus. Curabitur condimentum molestie posuere. Nullam porttitor maximus orci et lobortis. Morbi eget est ac arcu ullamcorper blandit.',
     },
