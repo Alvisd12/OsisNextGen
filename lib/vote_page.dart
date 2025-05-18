@@ -1,8 +1,41 @@
 import 'package:flutter/material.dart';
 import 'vote_page2.dart';
 
-class VotePage extends StatelessWidget {
+class VotePage extends StatefulWidget {
   const VotePage({Key? key}) : super(key: key);
+
+  @override
+  State<VotePage> createState() => _VotePageState();
+}
+
+class _VotePageState extends State<VotePage> {
+  final TextEditingController _namaController = TextEditingController();
+
+  String? selectedKelas;
+  String? selectedProfesi;
+
+  final List<String> kelasList = [
+    'VII A',
+    'VII B',
+    'VII C',
+    'VII D',
+    'VIII A',
+    'VIII B',
+    'VIII C',
+    'VIII D',
+    'IX A',
+    'IX B',
+    'IX C',
+    'IX D',
+  ];
+
+  final List<String> profesiList = [
+    'Ketua Kelas',
+    'Wakil Ketua Kelas',
+    'Sekretaris',
+    'Bendahara',
+    'Siswa',
+  ];
 
   void navigateToVote2Page(BuildContext context) {
     Navigator.push(
@@ -29,7 +62,7 @@ class VotePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green,
+      backgroundColor: const Color.fromARGB(255, 8, 142, 13),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -46,10 +79,13 @@ class VotePage extends StatelessWidget {
               style: TextStyle(color: Colors.white70),
             ),
             const SizedBox(height: 24),
-            Image.asset('assets/icon/logo.png', width: 120),
+            Image.asset('assets/icon/nu-10.png', width: 120),
             const SizedBox(height: 24),
-            const TextField(
-              decoration: InputDecoration(
+
+            // Input Nama Lengkap
+            TextField(
+              controller: _namaController,
+              decoration: const InputDecoration(
                 labelText: "Nama Lengkap",
                 filled: true,
                 fillColor: Colors.white,
@@ -57,33 +93,81 @@ class VotePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
+
+            // Dropdown Kelas
+            DropdownButtonFormField<String>(
+              value: selectedKelas,
+              items: kelasList.map((kelas) {
+                return DropdownMenuItem(
+                  value: kelas,
+                  child: Text(kelas),
+                );
+              }).toList(),
+              decoration: const InputDecoration(
                 labelText: "Kelas",
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(),
               ),
+              onChanged: (value) {
+                setState(() {
+                  selectedKelas = value;
+                });
+              },
             ),
             const SizedBox(height: 16),
-            const TextField(
-              decoration: InputDecoration(
+
+            // Dropdown Profesi
+            DropdownButtonFormField<String>(
+              value: selectedProfesi,
+              items: profesiList.map((profesi) {
+                return DropdownMenuItem(
+                  value: profesi,
+                  child: Text(profesi),
+                );
+              }).toList(),
+              decoration: const InputDecoration(
                 labelText: "Profesi",
                 filled: true,
                 fillColor: Colors.white,
                 border: OutlineInputBorder(),
               ),
+              onChanged: (value) {
+                setState(() {
+                  selectedProfesi = value;
+                });
+              },
             ),
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                navigateToVote2Page(context);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green[800],
-                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+
+            // Updated button using SizedBox for consistent styling
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {
+                  if (_namaController.text.isNotEmpty && selectedKelas != null && selectedProfesi != null) {
+                    navigateToVote2Page(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Lengkapi semua data sebelum lanjut."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green[900],
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text(
+                  "Lanjut", 
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
               ),
-              child: const Text("Lanjut"),
             ),
           ],
         ),

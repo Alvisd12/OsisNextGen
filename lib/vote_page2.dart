@@ -35,9 +35,9 @@ class _CandidateVotePageState extends State<CandidateVotePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF00A651),
+      backgroundColor: const Color.fromARGB(255, 8, 142, 13),
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        backgroundColor: const Color.fromARGB(255, 8, 142, 13),
         elevation: 0,
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),
@@ -115,7 +115,7 @@ class _CandidateVotePageState extends State<CandidateVotePage> {
                         padding: const EdgeInsets.all(12),
                         child: Icon(
                           isSelected ? Icons.check_box : Icons.check_box_outline_blank,
-                          color: isSelected ? Colors.green : Colors.white,
+                          color: isSelected ? const Color.fromARGB(255, 9, 129, 13) : Colors.white,
                           size: 28,
                         ),
                       )
@@ -152,7 +152,10 @@ class _CandidateVotePageState extends State<CandidateVotePage> {
                     );
                   }
                 },
-                child: const Text("Lanjut"),
+                child: const Text(
+                  "Lanjut",
+                  style: TextStyle(color: Colors.white),
+                )
               ),
             ),
           ],

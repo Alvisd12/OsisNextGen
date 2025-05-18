@@ -41,55 +41,68 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: ScaleTransition(
-                  scale: _scaleAnimation,
-                  child: Image.asset(
-                    'assets/icon/logo_warna.png',
-                    height: 300,
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Logo di bagian tengah
+            Expanded(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: FadeTransition(
+                    opacity: _fadeAnimation,
+                    child: ScaleTransition(
+                      scale: _scaleAnimation,
+                      child: Image.asset(
+                        'assets/icon/logo_warna.png',
+                        height: 300,
+                      ),
+                    ),
                   ),
                 ),
               ),
-
-              SizedBox(height: 40),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green[800],
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+            ),
+            
+            // Tombol login di bagian bawah
+            Padding(
+              padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 40.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[800],
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      PageRouteBuilder(
+                        transitionDuration: Duration(milliseconds: 700),
+                        pageBuilder: (context, animation, secondaryAnimation) => LoginPage(),
+                        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+                          final fade = Tween(begin: 0.0, end: 1.0).animate(animation);
+                          return FadeTransition(
+                            opacity: fade,
+                            child: child,
+                          );
+                        },
+                      ),
+                    );
+                  },
+                  child: Text(
+                    'Login',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    PageRouteBuilder(
-                      transitionDuration: Duration(milliseconds: 700),
-                      pageBuilder: (context, animation, secondaryAnimation) => LoginPage(),
-                      transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                        final fade = Tween(begin: 0.0, end: 1.0).animate(animation);
-                        return FadeTransition(
-                          opacity: fade,
-                          child: child,
-                        );
-                      },
-                    ),
-                  );
-                },
-                child: Text(
-                  'Login',
-                  style: TextStyle(color: Colors.white),
-                ),
-              )
-            ],
-          ),
+              ),
+            ),
+          ],
         ),
       ),
     );

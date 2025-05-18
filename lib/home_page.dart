@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:osis/vote_page.dart';
-import 'package:osis/statistik_page.dart';
-import 'package:osis/profil_page.dart';
+import 'vote_page.dart';
+import 'statistik_page.dart';
+import 'profil_page.dart';
 
 class HomePage extends StatefulWidget {
   final int nis;
@@ -15,23 +15,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
+  // ignore: unused_field
   bool _isInVotePage = false;
 
   final List<Widget> _pages = [
     const BerandaPage(),
     const CandidatesPage(),
+    const VotePage(),
     const StatistikPage(),
     const ProfilPage()
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-      _isInVotePage = false;
-    });
-  }
-
-  void _goToVotePage() {
+  void _navigateToVotePage() {
     setState(() {
       _isInVotePage = true;
     });
@@ -61,28 +56,15 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  final List<BottomNavigationBarItem> navItems = [
-    BottomNavigationBarItem(
-      icon: Image.asset('assets/icon/home.png', width: 24),
-      label: 'Beranda',
-    ),
-    BottomNavigationBarItem(
-      icon: Image.asset('assets/icon/kandidat.png', width: 24),
-      label: 'Kandidat',
-    ),
-    BottomNavigationBarItem(
-      icon: Image.asset('assets/icon/voting.png', width: 28),
-      label: 'Vote',
-    ),
-    BottomNavigationBarItem(
-      icon: Image.asset('assets/icon/stat.png', width: 24),
-      label: 'Statistik',
-    ),
-    BottomNavigationBarItem(
-      icon: Image.asset('assets/icon/profil.png', width: 24),
-      label: 'Profil',
-    ),
-  ];
+  void _onItemTapped(int index) {
+    if (index == 2) {
+      _navigateToVotePage();
+    } else {
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +94,7 @@ class _HomePageState extends State<HomePage> {
             ),
             drawerItem(Icons.home, 'Beranda'),
             drawerItem(Icons.groups, 'Kandidat'),
+            drawerItem(Icons.how_to_vote, 'Vote'),
             drawerItem(Icons.bar_chart, 'Statistik'),
             drawerItem(Icons.person, 'Profil'),
             const Spacer(),
@@ -129,65 +112,137 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      appBar: _isInVotePage
-          ? null
-          : AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              leading: Builder(
-                builder: (context) => IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.green),
-                  onPressed: () => Scaffold.of(context).openDrawer(),
-                ),
-              ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 16.0),
-                  child: Row(
-                    children: const [
-                      Text(
-                        "Hello, User",
-                        style: TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(width: 12),
-                      CircleAvatar(
-                        backgroundImage: AssetImage("assets/icon/user.png"),
-                        radius: 18,
-                      ),
-                    ],
-                  ),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Icons.menu, color: Colors.green),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Row(
+              children: const [
+                Text("Hello, User", style: TextStyle(color: Colors.green, fontSize: 16)),
+                SizedBox(width: 12),
+                CircleAvatar(
+                  backgroundImage: AssetImage("assets/icon/user.png"),
+                  radius: 18,
                 ),
               ],
             ),
-      body: Stack(
-        children: [
-          IndexedStack(
-            index: _selectedIndex,
-            children: [
-              _pages[0],
-              _pages[1],
-              Center(
-                child: ElevatedButton(
-                  onPressed: _goToVotePage,
-                  child: const Text("Go to Vote Page"),
-                ),
-              ),
-              _pages[2],
-              _pages[3],
-            ],
           ),
         ],
       ),
-      bottomNavigationBar: _isInVotePage
-          ? null
-          : BottomNavigationBar(
-              items: navItems,
-              currentIndex: _selectedIndex,
-              onTap: _onItemTapped,
-              selectedItemColor: Colors.green[700],
-              unselectedItemColor: Colors.grey,
-              type: BottomNavigationBarType.fixed,
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
+      ),
+      bottomNavigationBar: _buildCustomBottomNavigationBar(),
+      extendBody: true, // Keep this to allow content to flow under the navigation bar
+    );
+  }
+
+  Widget _buildCustomBottomNavigationBar() {
+    final Color primaryGreen = const Color(0xFF006633);
+    final Color backgroundColor = Colors.white;
+
+    return Container(
+      height: 80,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(0, "assets/icon/home.png", "Beranda"),
+              
+              _buildNavItem(1, "assets/icon/kandidat.png", "Kandidat"),
+              
+              SizedBox(width: MediaQuery.of(context).size.width * 0.2),
+              
+              _buildNavItem(3, "assets/icon/stat.png", "Statistik"),
+              
+              _buildNavItem(4, "assets/icon/profil.png", "Profil"),
+            ],
+          ),
+          
+          Positioned(
+            top: 0,
+            child: GestureDetector(
+              onTap: () => _navigateToVotePage(),
+              child: Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: primaryGreen,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Center(
+                  child: Image.asset(
+                    'assets/icon/voting.png',
+                    width: 30,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNavItem(int index, String iconPath, String label) {
+    final bool isSelected = _selectedIndex == index;
+    final Color primaryGreen = const Color(0xFF006633);
+    
+    return InkWell(
+      onTap: () => _onItemTapped(index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            iconPath,
+            width: 24,
+            height: 24,
+            color: isSelected ? primaryGreen : Colors.grey,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? primaryGreen : Colors.grey,
+              fontSize: 12,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -196,30 +251,33 @@ class _HomePageState extends State<HomePage> {
       leading: Icon(icon, color: Colors.white),
       title: Text(title, style: const TextStyle(color: Colors.white)),
       onTap: () {
-        int index = 0;
-        switch (title) {
-          case 'Beranda':
-            index = 0;
-            break;
-          case 'Kandidat':
-            index = 1;
-            break;
-          case 'Vote':
-            _goToVotePage();
-            return;
-          case 'Statistik':
-            index = 2;
-            break;
-          case 'Profil':
-            index = 3;
-            break;
-        }
         Navigator.pop(context);
-        _onItemTapped(index);
+
+        if (title == 'Vote') {
+          _navigateToVotePage();
+        } else {
+          int index = 0;
+          switch (title) {
+            case 'Beranda':
+              index = 0;
+              break;
+            case 'Kandidat':
+              index = 1;
+              break;
+            case 'Statistik':
+              index = 3;
+              break;
+            case 'Profil':
+              index = 4;
+              break;
+          }
+          _onItemTapped(index);
+        }
       },
     );
   }
 }
+
 
 
 // =================== Beranda =====================
@@ -267,17 +325,17 @@ class _BerandaPageState extends State<BerandaPage> {
 
     return Container(
       color: const Color(0xFFF5FDF9),
-      padding: EdgeInsets.fromLTRB(
-        16,
-        16,
-        16,
-        MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight,
-      ),
       child: SingleChildScrollView(
+        padding: EdgeInsets.fromLTRB(
+          16, 
+          16, 
+          16,
+          // Add bottom padding to prevent content from being hidden behind the navbar
+          MediaQuery.of(context).padding.bottom + 100,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 12),
             GestureDetector(
               onTap: () {
                 Navigator.push(
@@ -408,22 +466,25 @@ class CandidatesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: const Color(0xFFF5FDF9),
-      padding: EdgeInsets.fromLTRB(
-        16,
-        16,
-        16,
-        MediaQuery.of(context).padding.bottom + kBottomNavigationBarHeight,
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "The Candidates",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            child: Text(
+              "The Candidates",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
+            ),
           ),
           const SizedBox(height: 12),
           Expanded(
             child: ListView.builder(
+              padding: EdgeInsets.only(
+                left: 16, 
+                right: 16,
+                // Add bottom padding to prevent content from being hidden behind the navbar
+                bottom: MediaQuery.of(context).padding.bottom + 100,
+              ),
               itemCount: candidates.length,
               itemBuilder: (context, index) {
                 final c = candidates[index];
@@ -441,8 +502,6 @@ class CandidatesPage extends StatelessWidget {
     );
   }
 }
-
-// =================== Komponen =====================
 
 const List<Map<String, String>> candidates = [
   {
