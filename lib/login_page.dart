@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'home_page.dart';
-import 'welcome_page.dart';
+import 'splash_screen.dart';
 
 class LoginPage extends StatelessWidget {
   final TextEditingController _nisController = TextEditingController();
