@@ -405,7 +405,7 @@ class _BerandaPageState extends State<BerandaPage> {
             ),
             const SizedBox(height: 24),
             const Text(
-              "Events",
+              "Countdown",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
             ),
             const SizedBox(height: 8),

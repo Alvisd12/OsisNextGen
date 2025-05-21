@@ -10,7 +10,6 @@ class VotePage extends StatefulWidget {
 
 class _VotePageState extends State<VotePage> {
   final TextEditingController _namaController = TextEditingController();
-
   String? selectedKelas;
   String? selectedProfesi;
 
@@ -63,6 +62,28 @@ class _VotePageState extends State<VotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 8, 142, 13),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 8, 142, 13),
+        elevation: 0,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: CircleAvatar(
+            backgroundColor: Colors.orange,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
+        ),
+        title: const Text(
+          "Vote",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -140,7 +161,7 @@ class _VotePageState extends State<VotePage> {
             ),
             const SizedBox(height: 24),
 
-            // Updated button using SizedBox for consistent styling
+            // Tombol Lanjut
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

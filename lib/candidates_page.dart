@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'info_kandidat1.dart';
+import 'info_kandidat2.dart';
+import 'info_kandidat3.dart';
 
 class CandidatesPage extends StatelessWidget {
   final List<Map<String, String>> candidates = [
@@ -66,7 +69,7 @@ class CandidatesPage extends StatelessWidget {
                 itemCount: candidates.length,
                 itemBuilder: (context, index) {
                   final candidate = candidates[index];
-                  return CandidateCard(candidate: candidate);
+                  return CandidateCard(candidate: candidate, index: index);
                 },
               ),
             ),
@@ -79,8 +82,27 @@ class CandidatesPage extends StatelessWidget {
 
 class CandidateCard extends StatelessWidget {
   final Map<String, String> candidate;
+  final int index;
 
-  const CandidateCard({Key? key, required this.candidate}) : super(key: key);
+  const CandidateCard({
+    Key? key,
+    required this.candidate,
+    required this.index,
+  }) : super(key: key);
+
+  void _navigateToDetail(BuildContext context) {
+    switch (index) {
+      case 0:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const InfoKandidat1()));
+        break;
+      case 1:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const InfoKandidat2()));
+        break;
+      case 2:
+        Navigator.push(context, MaterialPageRoute(builder: (_) => const InfoKandidat3()));
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,43 +113,60 @@ class CandidateCard extends StatelessWidget {
         color: const Color(0xFFE3A963),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(
-              candidate['image']!,
-              width: 64,
-              height: 64,
-              fit: BoxFit.cover,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(
+                  candidate['image']!,
+                  width: 64,
+                  height: 64,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      candidate['name']!,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    const Text('Visi', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(candidate['visi']!),
+                    const SizedBox(height: 4),
+                    const Text('Misi', style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(candidate['misi']!),
+                  ],
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  candidate['name']!,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
+          const SizedBox(height: 12),
+
+          // Tombol Lebih Detail
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(
+              onPressed: () => _navigateToDetail(context),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white,
+                backgroundColor: Colors.green[800],
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                const SizedBox(height: 4),
-                const Text(
-                  'Visi',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(candidate['visi']!),
-                const SizedBox(height: 4),
-                const Text(
-                  'Misi',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                Text(candidate['misi']!),
-              ],
+              ),
+              child: const Text('Lebih Detail'),
             ),
           ),
         ],
