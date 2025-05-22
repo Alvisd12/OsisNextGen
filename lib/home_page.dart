@@ -1,12 +1,14 @@
+// ... (import lainnya)
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'vote_page.dart';
 import 'statistik_page.dart';
 import 'profil_page.dart';
+import 'candidates_page.dart';
+import 'candidate_data.dart';
 
 class HomePage extends StatefulWidget {
   final int nis;
-
   const HomePage({required this.nis, Key? key}) : super(key: key);
 
   @override
@@ -20,49 +22,33 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = [
     const BerandaPage(),
-    const CandidatesPage(),
+    CandidatesPage(),
     const VotePage(),
     const StatistikPage(),
-    const ProfilPage()
+    const ProfilPage(),
   ];
 
   void _navigateToVotePage() {
-    setState(() {
-      _isInVotePage = true;
-    });
+    setState(() => _isInVotePage = true);
 
     Navigator.push(
       context,
       PageRouteBuilder(
-        pageBuilder: (context, animation, secondaryAnimation) => const VotePage(),
-        transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(0.0, 1.0);
-          const end = Offset.zero;
-          const curve = Curves.easeInOut;
-
-          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-          var offsetAnimation = animation.drive(tween);
-
-          return SlideTransition(
-            position: offsetAnimation,
-            child: child,
-          );
+        pageBuilder: (_, animation, __) => const VotePage(),
+        transitionsBuilder: (_, animation, __, child) {
+          final tween = Tween(begin: const Offset(0, 1), end: Offset.zero)
+              .chain(CurveTween(curve: Curves.easeInOut));
+          return SlideTransition(position: animation.drive(tween), child: child);
         },
       ),
-    ).then((_) {
-      setState(() {
-        _isInVotePage = false;
-      });
-    });
+    ).then((_) => setState(() => _isInVotePage = false));
   }
 
   void _onItemTapped(int index) {
     if (index == 2) {
       _navigateToVotePage();
     } else {
-      setState(() {
-        _selectedIndex = index;
-      });
+      setState(() => _selectedIndex = index);
     }
   }
 
@@ -122,33 +108,24 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16.0),
-            child: Row(
-              children: const [
-                Text("Hello, User", style: TextStyle(color: Colors.green, fontSize: 16)),
-                SizedBox(width: 12),
-                CircleAvatar(
-                  backgroundImage: AssetImage("assets/icon/user.png"),
-                  radius: 18,
-                ),
-              ],
+          const Padding(
+            padding: EdgeInsets.only(right: 16.0),
+            child: CircleAvatar(
+              backgroundImage: AssetImage("assets/icon/user.png"),
+              radius: 18,
             ),
           ),
         ],
       ),
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _pages,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _pages),
       bottomNavigationBar: _buildCustomBottomNavigationBar(),
-      extendBody: true, // Keep this to allow content to flow under the navigation bar
+      extendBody: true,
     );
   }
 
   Widget _buildCustomBottomNavigationBar() {
-    final Color primaryGreen = const Color(0xFF006633);
-    final Color backgroundColor = Colors.white;
+    const Color primaryGreen = Color(0xFF006633);
+    const Color backgroundColor = Colors.white;
 
     return Container(
       height: 80,
@@ -173,41 +150,25 @@ class _HomePageState extends State<HomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildNavItem(0, "assets/icon/home.png", "Beranda"),
-              
               _buildNavItem(1, "assets/icon/kandidat.png", "Kandidat"),
-              
               SizedBox(width: MediaQuery.of(context).size.width * 0.2),
-              
               _buildNavItem(3, "assets/icon/stat.png", "Statistik"),
-              
               _buildNavItem(4, "assets/icon/profil.png", "Profil"),
             ],
           ),
-          
           Positioned(
             top: 0,
             child: GestureDetector(
-              onTap: () => _navigateToVotePage(),
+              onTap: _navigateToVotePage,
               child: Container(
                 width: 50,
                 height: 50,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: primaryGreen,
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 6,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
                 ),
                 child: Center(
-                  child: Image.asset(
-                    'assets/icon/voting.png',
-                    width: 30,
-                    color: Colors.white,
-                  ),
+                  child: Image.asset('assets/icon/voting.png', width: 30, color: Colors.white),
                 ),
               ),
             ),
@@ -219,8 +180,8 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildNavItem(int index, String iconPath, String label) {
     final bool isSelected = _selectedIndex == index;
-    final Color primaryGreen = const Color(0xFF006633);
-    
+    const Color primaryGreen = Color(0xFF006633);
+
     return InkWell(
       onTap: () => _onItemTapped(index),
       child: Column(
@@ -252,33 +213,27 @@ class _HomePageState extends State<HomePage> {
       title: Text(title, style: const TextStyle(color: Colors.white)),
       onTap: () {
         Navigator.pop(context);
-
-        if (title == 'Vote') {
-          _navigateToVotePage();
-        } else {
-          int index = 0;
-          switch (title) {
-            case 'Beranda':
-              index = 0;
-              break;
-            case 'Kandidat':
-              index = 1;
-              break;
-            case 'Statistik':
-              index = 3;
-              break;
-            case 'Profil':
-              index = 4;
-              break;
-          }
-          _onItemTapped(index);
+        switch (title) {
+          case 'Vote':
+            _navigateToVotePage();
+            break;
+          case 'Beranda':
+            _onItemTapped(0);
+            break;
+          case 'Kandidat':
+            _onItemTapped(1);
+            break;
+          case 'Statistik':
+            _onItemTapped(3);
+            break;
+          case 'Profil':
+            _onItemTapped(4);
+            break;
         }
       },
     );
   }
 }
-
-
 
 // =================== Beranda =====================
 
@@ -326,13 +281,7 @@ class _BerandaPageState extends State<BerandaPage> {
     return Container(
       color: const Color(0xFFF5FDF9),
       child: SingleChildScrollView(
-        padding: EdgeInsets.fromLTRB(
-          16, 
-          16, 
-          16,
-          // Add bottom padding to prevent content from being hidden behind the navbar
-          MediaQuery.of(context).padding.bottom + 100,
-        ),
+        padding: EdgeInsets.fromLTRB(16, 16, 16, MediaQuery.of(context).padding.bottom + 100),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -341,19 +290,11 @@ class _BerandaPageState extends State<BerandaPage> {
                 Navigator.push(
                   context,
                   PageRouteBuilder(
-                    pageBuilder: (context, animation, secondaryAnimation) => const VotePage(),
-                    transitionsBuilder: (context, animation, secondaryAnimation, child) {
-                      const begin = Offset(0.0, 1.0);
-                      const end = Offset.zero;
-                      const curve = Curves.easeInOut;
-
-                      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-                      var offsetAnimation = animation.drive(tween);
-
-                      return SlideTransition(
-                        position: offsetAnimation,
-                        child: child,
-                      );
+                    pageBuilder: (_, animation, __) => const VotePage(),
+                    transitionsBuilder: (_, animation, __, child) {
+                      final tween = Tween(begin: const Offset(0, 1), end: Offset.zero)
+                          .chain(CurveTween(curve: Curves.easeInOut));
+                      return SlideTransition(position: animation.drive(tween), child: child);
                     },
                   ),
                 );
@@ -377,37 +318,8 @@ class _BerandaPageState extends State<BerandaPage> {
                 ),
               ),
             ),
-
             const SizedBox(height: 24),
-            const Text(
-              "The Candidates",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 200,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: candidates.length,
-                itemBuilder: (context, index) {
-                  final c = candidates[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: CandidateCard(
-                      name: c['name']!,
-                      image: c['image']!,
-                      visi: c['visi']!,
-                      misi: c['misi']!,
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              "Countdown",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
-            ),
+            const Text("Countdown", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
             const SizedBox(height: 8),
             Container(
               padding: const EdgeInsets.all(16),
@@ -432,7 +344,54 @@ class _BerandaPageState extends State<BerandaPage> {
                   const Text("Pada 29 Mei 2025 Pukul 23:59", style: TextStyle(color: Colors.white)),
                 ],
               ),
-            )
+            ),
+            const SizedBox(height: 24),
+            const Text("Para Kandidat", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green)),
+            const SizedBox(height: 8),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: candidateData.length,
+              itemBuilder: (context, index) {
+                final candidate = candidateData[index];
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFE3A963),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          candidate['image'] ?? '',
+                          width: 50,
+                          height: 50,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(candidate['name'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold)),
+                            Text(
+                              candidate['visi'] ?? '',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
           ],
         ),
       ),
@@ -453,129 +412,6 @@ class _BerandaPageState extends State<BerandaPage> {
         const SizedBox(height: 4),
         Text(label, style: const TextStyle(color: Colors.white)),
       ],
-    );
-  }
-}
-
-// =================== Kandidat =====================
-
-class CandidatesPage extends StatelessWidget {
-  const CandidatesPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: const Color(0xFFF5FDF9),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-            child: Text(
-              "The Candidates",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.green),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.only(
-                left: 16, 
-                right: 16,
-                // Add bottom padding to prevent content from being hidden behind the navbar
-                bottom: MediaQuery.of(context).padding.bottom + 100,
-              ),
-              itemCount: candidates.length,
-              itemBuilder: (context, index) {
-                final c = candidates[index];
-                return CandidateCard(
-                  name: c['name']!,
-                  image: c['image']!,
-                  visi: c['visi']!,
-                  misi: c['misi']!,
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-const List<Map<String, String>> candidates = [
-  {
-    'name': 'Moch. Lukman',
-    'image': 'assets/icon/lukman.png',
-    'visi': 'Lorem ipsum dolor sit amet',
-    'misi': 'Curabitur condimentum molestie posuere',
-  },
-  {
-    'name': 'Aurelia Naura',
-    'image': 'assets/icon/naura.png',
-    'visi': 'Lorem ipsum dolor sit amet',
-    'misi': 'Curabitur condimentum molestie posuere',
-  },
-  {
-    'name': 'Andra Gio F.',
-    'image': 'assets/icon/andra.png',
-    'visi': 'Lorem ipsum dolor sit amet',
-    'misi': 'Curabitur condimentum molestie posuere',
-  },
-];
-
-class CandidateCard extends StatelessWidget {
-  final String name;
-  final String image;
-  final String visi;
-  final String misi;
-
-  const CandidateCard({
-    required this.name,
-    required this.image,
-    required this.visi,
-    required this.misi,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE3A963),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.asset(image, width: 64, height: 64, fit: BoxFit.cover),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(name, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                const SizedBox(height: 4),
-                const Text('Visi', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(visi),
-                const SizedBox(height: 4),
-                const Text('Misi', style: TextStyle(fontWeight: FontWeight.bold)),
-                Text(misi),
-              ],
-            ),
-          )
-        ],
-      ),
     );
   }
 }
